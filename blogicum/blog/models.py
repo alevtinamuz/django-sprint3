@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
+MAX_LENGTH = 256
 User = get_user_model()
 
 
@@ -21,7 +22,7 @@ class BaseModel(models.Model):
 
 
 class Post(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -39,13 +40,15 @@ class Post(BaseModel):
         'Location',
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name='Местоположение'
+        verbose_name='Местоположение',
+        related_name='posts'
     )
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
         verbose_name='Категория',
-        null=True
+        null=True,
+        related_name='posts'
     )
 
     class Meta:
@@ -58,7 +61,7 @@ class Post(BaseModel):
 
 
 class Category(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         unique=True,
@@ -78,7 +81,10 @@ class Category(BaseModel):
 
 
 class Location(BaseModel):
-    name = models.CharField(max_length=256, verbose_name='Название места')
+    name = models.CharField(
+        max_length=MAX_LENGTH,
+        verbose_name='Название места'
+    )
 
     class Meta:
         verbose_name = 'местоположение'
