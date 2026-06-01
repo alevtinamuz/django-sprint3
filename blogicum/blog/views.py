@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
+from .constants import ITEMS_PER_PAGE
 from .models import Post, Category
 
 
-ITEMS_PER_PAGE = 5
-
-
-def get_published_posts():
-    return Post.objects.filter(
+def get_published_posts(queryset=None):
+    if queryset is None:
+        queryset = Post.objects
+    return queryset.filter(
         pub_date__lte=timezone.now(),
         is_published=True,
         category__is_published=True
@@ -34,10 +34,7 @@ def category_posts(request, category_slug):
         slug=category_slug,
         is_published=True
     )
-    category_posts = category.posts.filter(
-        is_published=True,
-        pub_date__lte=timezone.now()
-    ).select_related('category', 'location')
+    category_posts = get_published_posts(category.posts)
     return render(
         request,
         'blog/category.html',

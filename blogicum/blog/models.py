@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .constants import MAX_LENGTH
 
-MAX_LENGTH = 256
+
 User = get_user_model()
 
 
@@ -40,21 +41,20 @@ class Post(BaseModel):
         'Location',
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name='Местоположение',
-        related_name='posts'
+        verbose_name='Местоположение'
     )
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
         verbose_name='Категория',
-        null=True,
-        related_name='posts'
+        null=True
     )
 
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
         ordering = ['-pub_date']
+        default_related_name = 'posts'
 
     def __str__(self):
         return self.title
